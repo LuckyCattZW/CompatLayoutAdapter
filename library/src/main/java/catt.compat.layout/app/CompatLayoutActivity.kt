@@ -27,11 +27,11 @@ abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factor
     override fun onCreateView(parent: View?, name: String, context: Context, attrs: AttributeSet): View? =
         compatViewInflater.createView(parent, name, context, attrs)?.apply {
             parent ?: return@apply
-            compatPixel(attrs)
+            scanCompatPixel()
         }
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? =
-        compatViewInflater.createView(name, context, attrs)?.compatPixel(attrs)
+        compatViewInflater.createView(name, context, attrs)?.scanCompatPixel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         whetherRootLayout = false
