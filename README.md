@@ -1,7 +1,7 @@
 # CompatLayoutAdapter
 按照屏幕像素比例适配
 
-
+#### 参考图
 - 分辨率：1536x2048
 - 尺寸：8.9英寸
 - 比例：4:3    
@@ -22,3 +22,7 @@
 - 尺寸：14英寸
 - 比例：4:3    
 <img width="360px" src="https://github.com/LuckyCattZW/CompatLayoutAdapter/blob/master/image/4x3_768x1024_14in.png"/>
+
+#### 使用方式
+
+`Activity`
