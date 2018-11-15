@@ -1,0 +1,30 @@
+package catt.compat.layout.enums
+
+object Units {
+    const val COMPLEX_UNIT_WIDTH = 10
+    const val COMPLEX_UNIT_HEIGHT = 11
+
+    const val COMPLEX_UNIT_TOP_MARGIN = 20
+    const val COMPLEX_UNIT_BOTTOM_MARGIN = 21
+    const val COMPLEX_UNIT_MARGIN_START = 22
+    const val COMPLEX_UNIT_MARGIN_END = 23
+    const val COMPLEX_UNIT_LEFT_MARGIN = 24
+    const val COMPLEX_UNIT_RIGHT_MARGIN = 25
+
+    const val COMPLEX_UNIT_PADDING_TOP = 30
+    const val COMPLEX_UNIT_PADDING_BOTTOM = 31
+    const val COMPLEX_UNIT_PADDING_START = 32
+    const val COMPLEX_UNIT_PADDING_END = 33
+    const val COMPLEX_UNIT_PADDING_LEFT = 34
+    const val COMPLEX_UNIT_PADDING_RIGHT = 35
+
+    const val COMPLEX_UNIT_TEXT_SIZE = 40
+    const val COMPLEX_UNIT_LINE_SPACING_EXTRA = 41
+
+
+    const val COMPLEX_UNIT_RADIUS = 50
+    const val COMPLEX_UNIT_BOTTOM_LEFT_RADIUS = 51
+    const val COMPLEX_UNIT_BOTTOM_RIGHT_RADIUS = 52
+    const val COMPLEX_UNIT_TOP_LEFT_RADIUS = 53
+    const val COMPLEX_UNIT_TOP_RIGHT_RADIUS = 54
+}

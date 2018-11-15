@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/MyAppCompatTextView"
+            android:layout_gravity="center"
+            android:text="Fragment"
+            android:textSize="50px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    <Button android:id="@+id/button"
+            android:text="跳转Dialog_Fragment"
+            android:textSize="50px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    <LinearLayout
+            android:layout_width="1536px"
+            android:orientation="horizontal"
+            android:layout_height="match_parent">
+
+        <View
+                android:layout_width="452px"
+                android:layout_margin="30px"
+                android:background="@android:color/holo_orange_dark"
+                android:layout_height="match_parent"
+        />
+
+        <View
+                android:layout_width="452px"
+                android:layout_margin="30px"
+                android:background="@android:color/holo_green_dark"
+                android:layout_height="match_parent"
+        />
+        <View android:layout_width="452px"
+              android:layout_margin="30px"
+              android:background="@android:color/holo_red_light"
+              android:layout_height="match_parent"
+        />
+
+    </LinearLayout>
+
+</LinearLayout>
