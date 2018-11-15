@@ -11,8 +11,8 @@ public class ExampleUnitTestJava {
 //        int y = 1080;
 //        int x = 1920;
 //        int y = 1200;
-        int x = 1280;
-        int y = 800;
+        int x = 1920;
+        int y = 1080;
 
         System.out.println("ZZZZ  " + y % x);
         System.out.println("ZZZZ  " + x % y);

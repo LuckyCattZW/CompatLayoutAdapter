@@ -7,13 +7,11 @@ import android.view.ViewGroup
 import catt.compat.layout.app.CompatLayoutDialogFragment
 import kotlinx.android.synthetic.*
 
-class MyDialogFragment : CompatLayoutDialogFragment(), LayoutInflater.Factory2 {
+class MyDialogFragment : CompatLayoutDialogFragment(){
     private val _TAG: String by lazy { MyDialogFragment::class.java.simpleName }
 
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return  compatCreateView(R.layout.dialog, container)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+        compatCreateView(R.layout.dialog, container)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
