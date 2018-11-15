@@ -32,8 +32,16 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
     inline fun convert(@UnitClubs unit: Int, value: Float): Float {
         if(value <= 0) return value
         originScreenMetrics ?: return value
-        val o = originScreenMetrics!!.realWidthPixel.toFloat()
-        val t = realWidthPixel.toFloat()
+
+        val os = floatArrayOf(
+            originScreenMetrics!!.realWidthPixel.toFloat(),
+            originScreenMetrics!!.realHeightPixel.toFloat()
+        ).apply { sort() }
+        val ts = floatArrayOf(realWidthPixel.toFloat(), realHeightPixel.toFloat()).apply { sort() }
+
+        val o = os[0]
+        val t = ts[0]
+
         return when (unit) {
             Units.COMPLEX_UNIT_WIDTH,
             Units.COMPLEX_UNIT_MARGIN_START,
