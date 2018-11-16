@@ -19,22 +19,24 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
     private val _displayMetrics: DisplayMetrics by lazy { DisplayMetrics() }
     private var defaultDisplay: Display? = null
 
-    var originScreenMetrics: OriginScreenMetrics? = null
+    var scanMatchConfigMetrics: OriginScreenMetrics? = null
+    var scanPropertiesMetricsMap: HashMap<String, OriginScreenMetrics>? = null
 
     fun initContent(context: Context, property: String) {
         defaultDisplay = (context.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-        originScreenMetrics = fetchPropertiesMetricsMap(property)[convertScreenScale()]
+        scanPropertiesMetricsMap = fetchPropertiesMetricsMap(property)
+        scanMatchConfigMetrics = scanPropertiesMetricsMap!![convertScreenScale()]
     }
 
     inline fun convert(@UnitClubs unit: Int, value: Int): Float = convert(unit, value.toFloat())
 
     inline fun convert(@UnitClubs unit: Int, value: Float): Float {
         if(value <= 0) return value
-        originScreenMetrics ?: return value
+        scanMatchConfigMetrics ?: return value
 
         val os = floatArrayOf(
-            originScreenMetrics!!.realWidthPixel.toFloat(),
-            originScreenMetrics!!.realHeightPixel.toFloat()
+            scanMatchConfigMetrics!!.realWidthPixel.toFloat(),
+            scanMatchConfigMetrics!!.realHeightPixel.toFloat()
         ).apply { sort() }
         val ts = floatArrayOf(realWidthPixel.toFloat(), realHeightPixel.toFloat()).apply { sort() }
 
