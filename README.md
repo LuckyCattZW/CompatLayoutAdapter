@@ -64,25 +64,6 @@ public class MyApplication extends Application {
 }
 ```
 
-`layout/activity.xml中添加标签`
-
-```html
-<!--你需要在每个Activity的layout中添加 app:activity_root_layout="true" 属性-->
-<!--该参数主要用于防止参与计算ActionBar等系统头部布局-->
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:activity_root_layout="true">
-        
-        <!--other views-->
-
-</Linearlayout>
-
-```
-
 `Activity`
 
 ```kotlin
@@ -111,7 +92,28 @@ class MyDialogFragment : CompatLayoutDialogFragment(){
 }
 ``` 
 
-#### res/layout的配置方式
+#### XML布局
+
+`layout/activity.xml中添加标签`
+
+```html
+<!--你需要在每个Activity的layout中添加 app:activity_root_layout="true" 属性-->
+<!--该参数主要用于防止参与计算ActionBar等系统头部布局-->
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:activity_root_layout="true">
+        
+        <!--other views-->
+
+</Linearlayout>
+
+```
+
+#### 布局结构
 
 `layout应依照以下进行配置`
 
