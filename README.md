@@ -30,17 +30,23 @@
 - res/layout/中的布局需要使用px
 - WARP_CONTENT、MATCH_PARENT、FILL_PARENT以及明确指定为0px的值均不参与适配计算
 
-#### 配置
-`gradle.properties`
-```text
-# 添加像素规格
-# 添加的像素规格会直接转换成比例进行存储
-# 同一像素比例不用重复添加
-# 如何计算像素比例
-# 最大公约数 = widthPixel % heightPixel
-# 像素比例 = "${widthPixel / 最大公约数}:${heightPixel / 最大公约数}"
-COMPAT_LAYOUT_CONFIG="2048x1563,1920x1080"
+`Step 1. Add the JitPack repository to your build file `
+
+```groovy
+	allprojects {
+		repositories {
+			maven { url 'https://jitpack.io' }
+		}
+	}
 ```
+
+`Step 2. Add the dependency`
+```groovy
+    dependencies {
+	    implementation 'com.github.LuckyCattZW:CompatLayoutAdapter:x.y.z'
+    }
+```
+
 #### 代码中
 
 `Application中进行初始化`
@@ -53,7 +59,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         //初始化
-        TargetScreenMetrics.TargetStatic.get().initContent(getApplicationContext());
+        TargetScreenMetrics.TargetStatic.get().initContent(getApplicationContext(), /*You Specs Property*/"1920x1080,1536x2048,1920x1200");
     }
 }
 ```
