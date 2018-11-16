@@ -5,7 +5,6 @@ import android.graphics.Point
 import android.util.DisplayMetrics
 import android.view.Display
 import android.view.WindowManager
-import catt.compat.layout.R
 import catt.compat.layout.enums.UnitClubs
 import catt.compat.layout.enums.Units
 import java.util.*
@@ -22,9 +21,9 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
 
     var originScreenMetrics: OriginScreenMetrics? = null
 
-    fun initContent(context: Context) {
+    fun initContent(context: Context, property: String) {
         defaultDisplay = (context.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-        originScreenMetrics = fetchPropertiesMetricsMap(context.applicationContext)[convertScreenScale()]
+        originScreenMetrics = fetchPropertiesMetricsMap(property)[convertScreenScale()]
     }
 
     inline fun convert(@UnitClubs unit: Int, value: Int): Float = convert(unit, value.toFloat())
@@ -129,8 +128,7 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
     override val inches: Float get() = calculationInches()
 
 
-    private fun fetchPropertiesMetricsMap(context: Context): HashMap<String, OriginScreenMetrics> {
-        val property = context.getString(R.string.compat_layout_config)
+    private fun fetchPropertiesMetricsMap(property: String): HashMap<String, OriginScreenMetrics> {
         if(property.isEmpty()) return HashMap()
         else return when{
             existMultiple(property) /*配置了多个像素比*/->{

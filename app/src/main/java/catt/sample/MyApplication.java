@@ -1,7 +1,6 @@
 package catt.sample;
 
 import android.app.Application;
-import android.util.Log;
 import catt.compat.layout.internal.TargetScreenMetrics;
 
 public class MyApplication extends Application {
@@ -10,6 +9,6 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        TargetScreenMetrics.TargetStatic.get().initContent(getApplicationContext());
+        TargetScreenMetrics.TargetStatic.get().initContent(getApplicationContext(), "1920x1080,2048x1536");
     }
 }
