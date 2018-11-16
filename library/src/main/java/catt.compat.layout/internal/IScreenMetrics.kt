@@ -3,6 +3,7 @@ package catt.compat.layout.internal
 import android.support.annotation.IntDef
 import android.support.annotation.StringDef
 import java.text.DecimalFormat
+import java.util.*
 
 interface IScreenMetrics {
     val screenScale: IntArray

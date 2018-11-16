@@ -26,7 +26,21 @@
 <img width="360px" src="https://github.com/LuckyCattZW/CompatLayoutAdapter/blob/master/image/4x3_768x1024_14in.png"/>
 
 ### 使用方式
+`注意点`
+- res/layout/中的布局需要使用px
+- WARP_CONTENT、MATCH_PARENT、FILL_PARENT以及明确指定为0px的值均不参与适配计算
 
+#### 配置
+`gradle.properties`
+```text
+# 添加像素规格
+# 添加的像素规格会直接转换成比例进行存储
+# 同一像素比例不用重复添加
+# 如何计算像素比例
+# 最大公约数 = widthPixel % heightPixel
+# 像素比例 = "${widthPixel / 最大公约数}:${heightPixel / 最大公约数}"
+COMPAT_LAYOUT_CONFIG="2048x1563,1920x1080"
+```
 #### 代码中
 
 `Application中进行初始化`
@@ -44,32 +58,11 @@ public class MyApplication extends Application {
 }
 ```
 
-`CompatLayoutAdapter\library\src\main\java\catt.compat.layout\Configture.kt`
-```kotlin
-/**
-* 你需要将不同比例以及该比例尺寸的对照宽/高像素传入Map中
-* 
-* 如何计算比例
-* 最大公约数 = widthPixel % heightPixel
-* 计算比例 "${widthPixel / 最大公约数}:${heightPixel / 最大公约数}"
-* 
-*/
-class Configture{
-    val originMetricsMap: Map<String, OriginScreenMetrics> by lazy {
-        mapOf(
-            "4:3" to OriginScreenMetrics(
-                intArrayOf(4, 3), 1536, 2048, 288.995F, 288.995F, "xhdpi", 320, 8.9F
-            ),
-            "16:9" to OriginScreenMetrics(intArrayOf(16, 9), 1920, 1080)
-        )
-    }
-}
-```
-
 `layout/activity.xml中添加标签`
 
 ```html
 <!--你需要在每个Activity的layout中添加 app:activity_root_layout="true" 属性-->
+<!--该参数主要用于防止参与计算ActionBar等系统头部布局-->
 <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -83,7 +76,6 @@ class Configture{
 </Linearlayout>
 
 ```
-
 
 `Activity`
 
@@ -123,6 +115,8 @@ PS：代码中引用的应该是你默认资源的layout布局.例如:setContent
 res/layout/activity_main.xml
 res/layout/fragment.xml
 
+# layout-结尾的4x3代表适配屏幕像素比例为4x3的设备
+# 4x3 的像素比 例如: 1536x2048、1440x1920、768x1024 ....
 res/layout-4x3/activity_main_4x3.xml
 res/layout-4x3/fragment_4x3.xml
 

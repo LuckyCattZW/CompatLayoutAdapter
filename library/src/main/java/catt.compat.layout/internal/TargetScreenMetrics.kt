@@ -3,13 +3,13 @@ package catt.compat.layout.internal
 import android.content.Context
 import android.graphics.Point
 import android.util.DisplayMetrics
-import android.util.Log.e
 import android.view.Display
 import android.view.WindowManager
-import catt.compat.layout.Configture
+import catt.compat.layout.R
 import catt.compat.layout.enums.UnitClubs
 import catt.compat.layout.enums.Units
 import java.util.*
+import kotlin.collections.HashMap
 
 /**
  * 当前屏幕参数(需要适配的目标屏幕参数)
@@ -23,8 +23,8 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
     var originScreenMetrics: OriginScreenMetrics? = null
 
     fun initContent(context: Context) {
-        defaultDisplay = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
-        originScreenMetrics = Configture.originMetricsMap[convertScreenScale()]
+        defaultDisplay = (context.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        originScreenMetrics = fetchPropertiesMetricsMap(context.applicationContext)[convertScreenScale()]
     }
 
     inline fun convert(@UnitClubs unit: Int, value: Int): Float = convert(unit, value.toFloat())
@@ -127,6 +127,48 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
         get() = IScreenMetrics.convertDensityLabel(densityDpi)
 
     override val inches: Float get() = calculationInches()
+
+
+    private fun fetchPropertiesMetricsMap(context: Context): HashMap<String, OriginScreenMetrics> {
+        val property = context.getString(R.string.compat_layout_config)
+        if(property.isEmpty()) return HashMap()
+        else return when{
+            existMultiple(property) /*配置了多个像素比*/->{
+                val list = property.split(",")
+                val map = HashMap<String, OriginScreenMetrics>()
+                for(index in list.indices){
+                    val specs = list[index]
+                    if(isCorrectFormat(specs)){
+                        val specsList = specs.split("x")
+                        val scale = calculationScreenScale(specsList[0].toInt(), specsList[1].toInt())
+                        val key = "${scale[0]}:${scale[1]}"
+                        map[key] = OriginScreenMetrics(scale, specsList[0].toInt(), specsList[1].toInt())
+                    }
+                }
+                map
+            }
+            !existMultiple(property) && isCorrectFormat(property) /*配置了一个像素比*/->{
+                val list = property.split("x")
+                val scale = calculationScreenScale(list[0].toInt(), list[1].toInt())
+                val map = HashMap<String, OriginScreenMetrics>()
+                val key = "${scale[0]}:${scale[1]}"
+                map[key] = OriginScreenMetrics(scale, list[0].toInt(), list[1].toInt())
+                map
+            }
+            else -> HashMap()
+        }
+    }
+
+    private fun existMultiple(property:String) : Boolean = property.indexOf(',', 0, false) != -1
+
+    private fun isCorrectFormat(property:String) : Boolean {
+        if(property.indexOf('x', 0, false) != -1){
+            val split = property.split("x")
+            if(split[0].length in 3..4 && split[1].length in 3..4) return true
+        }
+        return false
+    }
+
 
     override fun toString(): String {
         return "$_TAG(" +
