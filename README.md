@@ -49,7 +49,7 @@ class Configture{
 }
 ```
 
-`layout中添加标签`
+`layout/activity.xml中添加标签`
 
 ```html
 <!--你需要在每个Activity的layout中添加 app:activity_root_layout="true" 属性-->
