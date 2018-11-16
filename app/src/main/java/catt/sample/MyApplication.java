@@ -9,6 +9,6 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        TargetScreenMetrics.TargetStatic.get().initContent(getApplicationContext(), "1920x1080,2048x1536");
+        TargetScreenMetrics.get().initContent(getApplicationContext(), "1920x1080,2048x1536");
     }
 }

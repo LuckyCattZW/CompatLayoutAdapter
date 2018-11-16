@@ -181,6 +181,7 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
     }
 
     companion object TargetStatic {
+        @JvmStatic
         fun get(): TargetScreenMetrics =
             Helper.INSTANCE
 

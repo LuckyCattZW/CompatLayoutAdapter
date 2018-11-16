@@ -60,7 +60,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         //初始化
-        TargetScreenMetrics.TargetStatic.get().initContent(getApplicationContext(), /*You Specs Property*/"1920x1080,1536x2048,1920x1200");
+        TargetScreenMetrics.get().initContent(getApplicationContext(), /*You Specs Property*/"1920x1080,1536x2048,1920x1200");
     }
 }
 ```
