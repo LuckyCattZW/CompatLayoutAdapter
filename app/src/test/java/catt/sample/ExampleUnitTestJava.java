@@ -13,7 +13,7 @@ public class ExampleUnitTestJava {
 //        int y = 1200;
 
         int x = 1920;
-        int y = 1200;
+        int y = 1080;
 
         System.out.println("ZZZZ  " + y % x);
         System.out.println("ZZZZ  " + x % y);
@@ -22,7 +22,6 @@ public class ExampleUnitTestJava {
         System.out.println(c);
         System.out.println((x / c) + ":" + y / c);
     }
-
 
     public static int gcd(int m, int n) {
         while (true) {
@@ -33,25 +32,13 @@ public class ExampleUnitTestJava {
                 m %= n;
                 System.out.println("A " + m);
             }
-
-
             if (n % m == 0) {
                 System.out.println(n);
                 return m;
             } else {
                 n %= m;
-                System.out.println("A " + n);
+                System.out.println("B " + n);
             }
-
-
-//            if ((m = m % n) == 0){
-//                System.out.println(m);
-//                return n;
-//            }
-//            if ((n = n % m) == 0){
-//                System.out.println(n);
-//                return m;
-//            }
         }
     }
 }

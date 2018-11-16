@@ -15,7 +15,20 @@ interface IScreenMetrics {
     @DensityLabelClubs val densityLabel: String
     val inches: Float
 
-    fun maxNumberConventions(m: Int, n: Int): Int = m % n
+    fun maxNumberConventions(m: Int, n: Int): Int {
+        var m = m
+        var n = n
+        while (true) {
+            when(m % n == 0){
+                true -> return n
+                else -> m %= n
+            }
+            when(n % m == 0){
+                true -> return m
+                else -> n %= m
+            }
+        }
+    }
 
     fun calculationScreenScale(w:Int, h:Int):IntArray{
         val o = intArrayOf(w, h)
@@ -28,7 +41,6 @@ interface IScreenMetrics {
     }
 
     fun convertScreenScale() : String = "${screenScale[0]}:${screenScale[1]}"
-
 
     /**
      * 计算尺寸

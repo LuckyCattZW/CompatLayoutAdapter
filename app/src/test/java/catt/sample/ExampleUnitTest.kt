@@ -2,9 +2,6 @@ package catt.sample
 
 import org.junit.Test
 
-import org.junit.Assert.*
-import java.util.*
-
 /**
  * Example local unit test, which will execute on the development machine (host).
  *
@@ -13,36 +10,41 @@ import java.util.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
-//        var sValue : Date? = Date()
-//        println("1 sValue.hashCode = ${sValue?.hashCode()}")
-//        sValue = sValue ?: Date()
-//        println("2 sValue.hashCode = ${sValue?.hashCode()}")
-        val c = maxNumberConventions(2048, 1536)
+//        var x = 2048
+//        var y = 1536
+//        var x = 1920
+//        var y = 1200
+        var x = 1920
+        var y = 1080
 
-        println("${2048/c} : ${1536/c}")
+        val c = calculationScreenScale(x, y)
+        println("${c[0]}:${c[1]}")
 
-        val intArrayOf = intArrayOf(1536, 2048)
-        intArrayOf.sort()
-        intArrayOf.reverse()
-
-        for(index in intArrayOf.indices){
-            println(intArrayOf[index])
-        }
-
-
-//        println("${2048 / c} : ${1536 / c}")
     }
 
-    private fun maxNumberConventions(m: Int, n: Int): Int {
-        val big = when(m.compareTo(n)){
-            0, 1 -> m
-            else -> n
+    fun calculationScreenScale(w:Int, h:Int):IntArray{
+        val o = intArrayOf(w, h)
+        o.sortDescending()
+        val conventions:Int = maxNumberConventions(o[0], o[1])
+        println("conventions=$conventions")
+        for(index in o.indices){
+            o[index] /= conventions
         }
-        val small = when (m.compareTo(n)) {
-            0, 1 -> n
-            else -> m
-        }
-        return big % small
+        return o
     }
 
+    fun maxNumberConventions(m: Int, n: Int): Int {
+        var m = m
+        var n = n
+        while (true) {
+            when(m % n == 0){
+                true -> return n
+                else -> m %= n
+            }
+            when(n % m == 0){
+                true -> return m
+                else -> n %= m
+            }
+        }
+    }
 }
