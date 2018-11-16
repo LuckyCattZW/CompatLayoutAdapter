@@ -26,9 +26,6 @@
 <img width="360px" src="https://github.com/LuckyCattZW/CompatLayoutAdapter/blob/master/image/4x3_768x1024_14in.png"/>
 
 ### 使用方式
-`注意点`
-- res/layout/中的布局需要使用px
-- WARP_CONTENT、MATCH_PARENT、FILL_PARENT以及明确指定为0px的值均不参与适配计算
 
 `Step 1. Add the JitPack repository to your build file `
 
@@ -46,6 +43,10 @@ dependencies {
 	implementation 'com.github.LuckyCattZW:CompatLayoutAdapter:x.y.z'
 }
 ```
+
+`注意点`
+- res/layout/中的布局需要使用px
+- WARP_CONTENT、MATCH_PARENT、FILL_PARENT以及明确指定为0px的值均不参与适配计算
 
 #### 代码中
 
