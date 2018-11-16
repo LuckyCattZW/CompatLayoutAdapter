@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/LuckyCattZW/CompatLayoutAdapter.svg)](https://jitpack.io/#LuckyCattZW/CompatLayoutAdapter)
+
 # CompatLayoutAdapter
 按照屏幕像素比例适配
 
