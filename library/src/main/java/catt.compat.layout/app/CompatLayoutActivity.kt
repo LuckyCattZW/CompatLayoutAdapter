@@ -9,7 +9,6 @@ import android.util.Log.*
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import catt.compat.layout.R
 import catt.compat.layout.internal.CompatViewInflater
 import catt.compat.layout.internal.IMatch
@@ -18,8 +17,6 @@ import catt.compat.layout.internal.TargetScreenMetrics
 abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factory2, IMatch {
     private val _TAG: String by lazy { CompatLayoutActivity::class.java.simpleName }
 
-    private val contentParent: FrameLayout by lazy { findViewById<FrameLayout>(android.R.id.content) }
-
     private val compatViewInflater: CompatViewInflater by lazy { CompatViewInflater() }
 
     private var whetherRootLayout: Boolean = false
@@ -27,11 +24,11 @@ abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factor
     override fun onCreateView(parent: View?, name: String, context: Context, attrs: AttributeSet): View? =
         compatViewInflater.createView(parent, name, context, attrs)?.apply {
             parent ?: return@apply
-            scanCompatPixel()
+            scanCompatPixel(attrs)
         }
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? =
-        compatViewInflater.createView(name, context, attrs)?.scanCompatPixel()
+        compatViewInflater.createView(name, context, attrs)?.scanCompatPixel(attrs)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         whetherRootLayout = false
@@ -90,7 +87,7 @@ abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factor
         w(_TAG, "${TargetScreenMetrics.get()}")
     }
 
-    private fun View.compatPixel(attrs: AttributeSet): View {
+    private fun View.scanCompatPixel(attrs: AttributeSet): View {
         if (!whetherRootLayout) {
             for (index in 0 until attrs.attributeCount) {
                 whetherRootLayout = when (attrs.getAttributeNameResource(index)) {
@@ -106,10 +103,4 @@ abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factor
         } else compatPixel()
         return this
     }
-
-    private fun View.scanCompatPixel():View{
-        if(contentParent.indexOfChild(this) != -1) compatPixel()
-        return this
-    }
-
 }
