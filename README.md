@@ -27,6 +27,21 @@
 
 #### 代码中
 
+`Application中进行初始化`
+
+```java
+public class MyApplication extends Application {
+    private String TAG = MyApplication.class.getSimpleName();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        //初始化
+        TargetScreenMetrics.TargetStatic.get().initContent(getApplicationContext());
+    }
+}
+```
+
 `CompatLayoutAdapter\library\src\main\java\catt.compat.layout\Configture.kt`
 ```kotlin
 /**
