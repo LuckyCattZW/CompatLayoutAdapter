@@ -42,6 +42,7 @@ interface IScreenMetrics {
 
     fun convertScreenScale() : String = "${screenScale[0]}:${screenScale[1]}"
 
+
     /**
      * 计算尺寸
      */

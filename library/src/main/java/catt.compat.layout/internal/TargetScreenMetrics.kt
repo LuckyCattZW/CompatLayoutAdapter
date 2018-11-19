@@ -3,6 +3,7 @@ package catt.compat.layout.internal
 import android.content.Context
 import android.graphics.Point
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Display
 import android.view.WindowManager
 import catt.compat.layout.enums.UnitClubs
@@ -19,30 +20,39 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
     private val _displayMetrics: DisplayMetrics by lazy { DisplayMetrics() }
     private var defaultDisplay: Display? = null
 
+    private var context:Context?=null
     var scanMatchConfigMetrics: OriginScreenMetrics? = null
     var scanPropertiesMetricsMap: HashMap<String, OriginScreenMetrics>? = null
 
-    fun initContent(context: Context, property: String) {
-        defaultDisplay = (context.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+    fun initContent(ctx: Context, property: String) {
+        context = ctx.applicationContext
+        defaultDisplay = (ctx.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
         scanPropertiesMetricsMap = fetchPropertiesMetricsMap(property)
         scanMatchConfigMetrics = scanPropertiesMetricsMap!![convertScreenScale()]
     }
 
+    var newIdentifier: Int = 0
+        set(identifier) {
+            val resourceName = context!!.resources.getResourceName(identifier)
+            Log.i(_TAG, "origin reference layout = $resourceName")
+            val packageName = resourceName.substring(0, resourceName.lastIndexOf(':'))
+            val type = resourceName.substring(resourceName.lastIndexOf(':') + 1, resourceName.lastIndexOf('/'))
+            val name = resourceName.substring(resourceName.lastIndexOf('/') + 1)
+            val scale = TargetScreenMetrics.get().screenScale
+            val reference = "${name}_${scale[0]}x${scale[1]}"
+            val id = context!!.resources.getIdentifier(reference, type, packageName)
+            Log.i(_TAG, "real reference layout = $reference, loading successfully->${id != 0}")
+            field = id
+        }
+
+    @Deprecated(message = "No longer convert by unit", replaceWith = ReplaceWith("getRealPixel(value: Float)"))
     inline fun convert(@UnitClubs unit: Int, value: Int): Float = convert(unit, value.toFloat())
 
+    @Deprecated(message = "No longer convert by unit", replaceWith = ReplaceWith("getRealPixel(value: Float)"))
     inline fun convert(@UnitClubs unit: Int, value: Float): Float {
         if(value <= 0) return value
         scanMatchConfigMetrics ?: return value
-
-        val os = floatArrayOf(
-            scanMatchConfigMetrics!!.realWidthPixel.toFloat(),
-            scanMatchConfigMetrics!!.realHeightPixel.toFloat()
-        ).apply { sort() }
-        val ts = floatArrayOf(realWidthPixel.toFloat(), realHeightPixel.toFloat()).apply { sort() }
-
-        val o = os[0]
-        val t = ts[0]
-
+        val realPixel= getRealPixel(value)
         return when (unit) {
             Units.COMPLEX_UNIT_WIDTH,
             Units.COMPLEX_UNIT_MARGIN_START,
@@ -52,30 +62,61 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
             Units.COMPLEX_UNIT_PADDING_START,
             Units.COMPLEX_UNIT_PADDING_END,
             Units.COMPLEX_UNIT_PADDING_LEFT,
-            Units.COMPLEX_UNIT_PADDING_RIGHT -> {
-                t / o * value
-            }
+            Units.COMPLEX_UNIT_PADDING_RIGHT -> realPixel
             Units.COMPLEX_UNIT_HEIGHT,
             Units.COMPLEX_UNIT_TOP_MARGIN,
             Units.COMPLEX_UNIT_BOTTOM_MARGIN,
             Units.COMPLEX_UNIT_PADDING_TOP,
             Units.COMPLEX_UNIT_PADDING_BOTTOM,
-            Units.COMPLEX_UNIT_LINE_SPACING_EXTRA -> {
-                t / o * value
-            }
-            Units.COMPLEX_UNIT_TEXT_SIZE,
+            Units.COMPLEX_UNIT_LINE_SPACING_EXTRA -> realPixel
+            Units.COMPLEX_UNIT_TEXT_SIZE -> realPixel
             Units.COMPLEX_UNIT_RADIUS,
             Units.COMPLEX_UNIT_BOTTOM_LEFT_RADIUS,
             Units.COMPLEX_UNIT_BOTTOM_RIGHT_RADIUS,
             Units.COMPLEX_UNIT_TOP_LEFT_RADIUS,
-            Units.COMPLEX_UNIT_TOP_RIGHT_RADIUS -> {
-                t / o * value
-            }
-            else -> value
+            Units.COMPLEX_UNIT_TOP_RIGHT_RADIUS -> realPixel
+            else -> realPixel
         }
     }
 
+    inline fun getRealPixel(value: Int): Float = getRealPixel(value.toFloat())
+
+    inline fun getRealPixel(value: Float): Float{
+        if(value <= 0) return value
+        scanMatchConfigMetrics ?: return value
+        val os = floatArrayOf(
+                scanMatchConfigMetrics!!.realWidthPixel.toFloat(),
+                scanMatchConfigMetrics!!.realHeightPixel.toFloat()
+        ).apply { sort() }
+        val ts = floatArrayOf(realWidthPixel.toFloat(), realHeightPixel.toFloat()).apply { sort() }
+
+        val o = os[0]
+        val t = ts[0]
+        return t / o * value
+    }
+
     override val screenScale: IntArray get() = calculationScreenScale(realWidthPixel, realHeightPixel)
+
+
+    val relativeWidthPixel:Int
+    get() {
+        var metrics = DisplayMetrics()
+        defaultDisplay?.apply {
+            getMetrics(metrics)
+            return metrics.widthPixels
+        }
+        return 0
+    }
+
+    val relativeHeightPixel:Int
+    get() {
+        var metrics = DisplayMetrics()
+        defaultDisplay?.apply {
+            getMetrics(metrics)
+            return metrics.heightPixels
+        }
+        return 0
+    }
 
     override val realWidthPixel: Int
         get() {
@@ -128,7 +169,6 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
         get() = IScreenMetrics.convertDensityLabel(densityDpi)
 
     override val inches: Float get() = calculationInches()
-
 
     private fun fetchPropertiesMetricsMap(property: String): HashMap<String, OriginScreenMetrics> {
         if(property.isEmpty()) return HashMap()

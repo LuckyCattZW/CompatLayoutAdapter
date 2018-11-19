@@ -3,7 +3,6 @@ package catt.compat.layout.internal
 import android.graphics.drawable.GradientDrawable
 import android.os.Build
 import android.support.annotation.RequiresApi
-import android.util.Log.e
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +10,9 @@ import android.widget.*
 import catt.compat.layout.enums.Units
 
 interface IMatch {
+
     fun View.compatPixel(): View {
-        val view:View = this
+        val view: View = this
 
         convertCompatPadding()
         if (this is TextView) {
@@ -20,21 +20,24 @@ interface IMatch {
             convertCompatLineSpacing()
         }
 
-        post {
-            layoutParams?.apply {
-                when(this@apply){
-                    is ViewGroup.MarginLayoutParams->{
-                        convertCompatMargin()
-                        convertCompatWidth(view)
-                        convertCompatHeight(view)
-                    }
-                    is ViewGroup.LayoutParams->{
-                        convertCompatWidth(view)
-                        convertCompatHeight(view)
+        if (view.visibility != View.GONE) {
+            post {
+                layoutParams?.apply {
+                    when (this@apply) {
+                        is ViewGroup.MarginLayoutParams -> {
+                            convertCompatMargin()
+                            convertCompatWidth(view)
+                            convertCompatHeight(view)
+                        }
+                        is ViewGroup.LayoutParams -> {
+                            convertCompatWidth(view)
+                            convertCompatHeight(view)
+                        }
                     }
                 }
             }
         }
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             if (background is GradientDrawable) {
@@ -44,82 +47,81 @@ interface IMatch {
         return view
     }
 
-    fun TextView.convertCompatTextSize(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
-        setTextSize(TypedValue.COMPLEX_UNIT_PX, metrics.convert(Units.COMPLEX_UNIT_TEXT_SIZE, textSize))
+    private fun TextView.convertCompatTextSize(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
+        setTextSize(TypedValue.COMPLEX_UNIT_PX, metrics.getRealPixel(textSize))
     }
 
-    fun TextView.convertCompatLineSpacing(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
-        setLineSpacing(metrics.convert(Units.COMPLEX_UNIT_LINE_SPACING_EXTRA, lineSpacingExtra), lineSpacingMultiplier)
+    private fun TextView.convertCompatLineSpacing(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
+        setLineSpacing(metrics.getRealPixel(lineSpacingExtra), lineSpacingMultiplier)
     }
 
-    fun ViewGroup.LayoutParams.convertCompatWidth(view: View, metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
+    private fun ViewGroup.LayoutParams.convertCompatWidth(view: View, metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
         width = when (width) {
-            0, -1, -2 -> metrics.convert(Units.COMPLEX_UNIT_WIDTH, width).toInt()
-            else -> metrics.convert(Units.COMPLEX_UNIT_WIDTH, view.measuredWidth).toInt()
+            0, -1, -2 -> metrics.getRealPixel(width).toInt()
+            else -> metrics.getRealPixel(view.measuredWidth).toInt()
         }
     }
 
-    fun ViewGroup.LayoutParams.convertCompatHeight(view: View, metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
+    private fun ViewGroup.LayoutParams.convertCompatHeight(view: View, metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
         height = when (height) {
-            0, -1, -2 -> metrics.convert(Units.COMPLEX_UNIT_HEIGHT, height).toInt()
-            else -> metrics.convert(Units.COMPLEX_UNIT_HEIGHT, view.measuredHeight).toInt()
+            0, -1, -2 -> metrics.getRealPixel(height).toInt()
+            else -> metrics.getRealPixel(view.measuredHeight).toInt()
         }
     }
 
-    fun ViewGroup.MarginLayoutParams.convertCompatMargin(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
+    private fun ViewGroup.MarginLayoutParams.convertCompatMargin(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
         if (marginEnd > 0 || marginStart > 0) {
             setMargins(
-                metrics.convert(Units.COMPLEX_UNIT_MARGIN_START, marginStart).toInt(),
-                metrics.convert(Units.COMPLEX_UNIT_TOP_MARGIN, topMargin).toInt(),
-                metrics.convert(Units.COMPLEX_UNIT_MARGIN_END, marginEnd).toInt(),
-                metrics.convert(Units.COMPLEX_UNIT_BOTTOM_MARGIN, bottomMargin).toInt()
+                    metrics.getRealPixel( marginStart).toInt(),
+                    metrics.getRealPixel(topMargin).toInt(),
+                    metrics.getRealPixel( marginEnd).toInt(),
+                    metrics.getRealPixel(bottomMargin).toInt()
             )
-        }
-        else {
+        } else {
             setMargins(
-                metrics.convert(Units.COMPLEX_UNIT_LEFT_MARGIN, leftMargin).toInt(),
-                metrics.convert(Units.COMPLEX_UNIT_TOP_MARGIN, topMargin).toInt(),
-                metrics.convert(Units.COMPLEX_UNIT_RIGHT_MARGIN, rightMargin).toInt(),
-                metrics.convert(Units.COMPLEX_UNIT_BOTTOM_MARGIN, bottomMargin).toInt()
+                    metrics.getRealPixel(leftMargin).toInt(),
+                    metrics.getRealPixel(topMargin).toInt(),
+                    metrics.getRealPixel(rightMargin).toInt(),
+                    metrics.getRealPixel(bottomMargin).toInt()
             )
         }
     }
 
-    fun View.convertCompatPadding(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
+    private fun View.convertCompatPadding(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
         if (paddingStart > 0 || paddingEnd > 0) setPaddingRelative(
-            metrics.convert(Units.COMPLEX_UNIT_PADDING_START, paddingStart).toInt(),
-            metrics.convert(Units.COMPLEX_UNIT_PADDING_TOP, paddingTop).toInt(),
-            metrics.convert(Units.COMPLEX_UNIT_PADDING_END, paddingEnd).toInt(),
-            metrics.convert(Units.COMPLEX_UNIT_PADDING_BOTTOM, paddingBottom).toInt()
+                metrics.getRealPixel(paddingStart).toInt(),
+                metrics.getRealPixel(paddingTop).toInt(),
+                metrics.getRealPixel(paddingEnd).toInt(),
+                metrics.getRealPixel( paddingBottom).toInt()
         )
         else setPadding(
-            metrics.convert(Units.COMPLEX_UNIT_PADDING_LEFT, paddingLeft).toInt(),
-            metrics.convert(Units.COMPLEX_UNIT_PADDING_TOP, paddingTop).toInt(),
-            metrics.convert(Units.COMPLEX_UNIT_PADDING_RIGHT, paddingRight).toInt(),
-            metrics.convert(Units.COMPLEX_UNIT_PADDING_BOTTOM, paddingBottom).toInt()
+                metrics.getRealPixel(paddingLeft).toInt(),
+                metrics.getRealPixel( paddingTop).toInt(),
+                metrics.getRealPixel(paddingRight).toInt(),
+                metrics.getRealPixel( paddingBottom).toInt()
         )
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    fun GradientDrawable.convertCompatCornerRadii(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
+    private fun GradientDrawable.convertCompatCornerRadii(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
         if (cornerRadii != null && cornerRadii.isNotEmpty()) {
             for (index in cornerRadii.indices) {
                 cornerRadii[index] = when (index) {
                     0 /*top-left*/ -> metrics.convert(
-                        Units.COMPLEX_UNIT_TOP_LEFT_RADIUS,
-                        cornerRadii[index]
+                            Units.COMPLEX_UNIT_TOP_LEFT_RADIUS,
+                            cornerRadii[index]
                     )
                     1 /*top-right*/ -> metrics.convert(
-                        Units.COMPLEX_UNIT_TOP_RIGHT_RADIUS,
-                        cornerRadii[index]
+                            Units.COMPLEX_UNIT_TOP_RIGHT_RADIUS,
+                            cornerRadii[index]
                     )
                     2 /*bottom-right*/ -> metrics.convert(
-                        Units.COMPLEX_UNIT_BOTTOM_RIGHT_RADIUS,
-                        cornerRadii[index]
+                            Units.COMPLEX_UNIT_BOTTOM_RIGHT_RADIUS,
+                            cornerRadii[index]
                     )
                     3 /*bottom-left*/ -> metrics.convert(
-                        Units.COMPLEX_UNIT_BOTTOM_LEFT_RADIUS,
-                        cornerRadii[index]
+                            Units.COMPLEX_UNIT_BOTTOM_LEFT_RADIUS,
+                            cornerRadii[index]
                     )
                     else -> cornerRadii[index]
                 }

@@ -35,12 +35,8 @@ abstract class CompatLayoutDialogFragment : DialogFragment(), LayoutInflater.Fac
 
     private var newIdentifier: Int = 0
         set(identifier) {
-            val resourceName = resources.getResourceName(identifier)
-            val packageName = resourceName.substring(0, resourceName.lastIndexOf(':'))
-            val type = resourceName.substring(resourceName.lastIndexOf(':') + 1, resourceName.lastIndexOf('/'))
-            val name = resourceName.substring(resourceName.lastIndexOf('/') + 1)
-            val scale = TargetScreenMetrics.get().screenScale
-            field = resources.getIdentifier("${name}_${scale[0]}x${scale[1]}", type, packageName)
+            TargetScreenMetrics.get().newIdentifier = identifier
+            field = TargetScreenMetrics.get().newIdentifier
         }
 
 }

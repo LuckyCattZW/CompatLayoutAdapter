@@ -51,10 +51,10 @@ abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factor
     }
 
     override fun setContentView(layoutResID: Int) {
-        newIdentifier = layoutResID
+        TargetScreenMetrics.get().newIdentifier = layoutResID
         super.setContentView(
-            when (newIdentifier > 0) {
-                true -> newIdentifier
+            when (TargetScreenMetrics.get().newIdentifier > 0) {
+                true -> TargetScreenMetrics.get().newIdentifier
                 false -> layoutResID
             }
         )
@@ -75,12 +75,8 @@ abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factor
 
     private var newIdentifier: Int = 0
         set(identifier) {
-            val resourceName = resources.getResourceName(identifier)
-            val packageName = resourceName.substring(0, resourceName.lastIndexOf(':'))
-            val type = resourceName.substring(resourceName.lastIndexOf(':') + 1, resourceName.lastIndexOf('/'))
-            val name = resourceName.substring(resourceName.lastIndexOf('/') + 1)
-            val scale = TargetScreenMetrics.get().screenScale
-            field = resources.getIdentifier("${name}_${scale[0]}x${scale[1]}", type, packageName)
+            TargetScreenMetrics.get().newIdentifier = identifier
+            field = TargetScreenMetrics.get().newIdentifier
         }
 
     private fun printlnMetrics() {
