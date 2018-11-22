@@ -35,8 +35,7 @@ abstract class CompatLayoutDialogFragment : DialogFragment(), LayoutInflater.Fac
 
     private var newIdentifier: Int = 0
         set(identifier) {
-            TargetScreenMetrics.get().newIdentifier = identifier
-            field = TargetScreenMetrics.get().newIdentifier
+            field = TargetScreenMetrics.get().newIdentifier(identifier)
         }
 
 }

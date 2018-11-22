@@ -31,7 +31,12 @@ class TargetScreenMetrics private constructor() : IScreenMetrics {
         scanMatchConfigMetrics = scanPropertiesMetricsMap!![convertScreenScale()]
     }
 
-    var newIdentifier: Int = 0
+    fun newIdentifier(layoutId : Int): Int{
+        newIdentifier = layoutId
+        return newIdentifier
+    }
+
+    private var newIdentifier: Int = 0
         set(identifier) {
             val resourceName = context!!.resources.getResourceName(identifier)
             Log.i(_TAG, "origin reference layout = $resourceName")
