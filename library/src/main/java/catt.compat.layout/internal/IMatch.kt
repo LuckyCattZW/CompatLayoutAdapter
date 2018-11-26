@@ -11,40 +11,62 @@ import catt.compat.layout.enums.Units
 
 interface IMatch {
 
-    fun View.compatPixel(): View {
-        val view: View = this
+    fun View.isAnalyticalFinished(): Boolean {
+        var finished = false
+        if (width != 0 && measuredWidth != 0) finished = true
+        if (height != 0 && measuredHeight != 0) finished = true
+        return finished
+    }
 
-        convertCompatPadding()
-        if (this is TextView) {
-            convertCompatTextSize()
-            convertCompatLineSpacing()
+    fun View.compatMargin(): View{
+        if (visibility != View.GONE) {
+            layoutParams?.apply {
+                if(this@apply is ViewGroup.MarginLayoutParams) convertCompatMargin()
+            }
         }
+        return this
+    }
 
-        if (view.visibility != View.GONE) {
-            post {
-                layoutParams?.apply {
-                    when (this@apply) {
-                        is ViewGroup.MarginLayoutParams -> {
-                            convertCompatMargin()
-                            convertCompatWidth(view)
-                            convertCompatHeight(view)
-                        }
-                        is ViewGroup.LayoutParams -> {
-                            convertCompatWidth(view)
-                            convertCompatHeight(view)
-                        }
+    fun View.compatMeasuredSize(): View{
+        val view = this
+        if (visibility != View.GONE) {
+            layoutParams?.apply {
+                when (this@apply) {
+                    is ViewGroup.MarginLayoutParams -> {
+                        convertCompatMeasuredWidth(view)
+                        convertCompatMeasuredHeight(view)
+                    }
+                    is ViewGroup.LayoutParams -> {
+                        convertCompatMeasuredWidth(view)
+                        convertCompatMeasuredHeight(view)
                     }
                 }
             }
         }
+        return view
+    }
 
 
+    fun View.compatPadding(): View {
+        convertCompatPadding()
+        return this
+    }
+
+    fun View.compatTextParams(): View {
+        if (this is TextView) {
+            convertCompatTextSize()
+            convertCompatLineSpacing()
+        }
+        return this
+    }
+
+    fun View.compatDrawableRadii():View{
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             if (background is GradientDrawable) {
                 (background as GradientDrawable).convertCompatCornerRadii()
             }
         }
-        return view
+        return this
     }
 
     private fun TextView.convertCompatTextSize(metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
@@ -55,16 +77,17 @@ interface IMatch {
         setLineSpacing(metrics.getRealPixel(lineSpacingExtra), lineSpacingMultiplier)
     }
 
-    private fun ViewGroup.LayoutParams.convertCompatWidth(view: View, metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
+    private fun ViewGroup.LayoutParams.convertCompatMeasuredWidth(view: View, metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
         width = when (width) {
-            0, -1, -2 -> metrics.getRealPixel(width).toInt()
+            0, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT ->
+                metrics.getRealPixel(width).toInt()
             else -> metrics.getRealPixel(view.measuredWidth).toInt()
         }
     }
 
-    private fun ViewGroup.LayoutParams.convertCompatHeight(view: View, metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
+    private fun ViewGroup.LayoutParams.convertCompatMeasuredHeight(view: View, metrics: TargetScreenMetrics = TargetScreenMetrics.get()) {
         height = when (height) {
-            0, -1, -2 -> metrics.getRealPixel(height).toInt()
+            0, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT -> metrics.getRealPixel(height).toInt()
             else -> metrics.getRealPixel(view.measuredHeight).toInt()
         }
     }

@@ -17,24 +17,33 @@ import catt.compat.layout.internal.TargetScreenMetrics
 abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factory2, IMatch {
     private val _TAG: String by lazy { CompatLayoutActivity::class.java.simpleName }
 
+    private val delayCompatList : ArrayList<View> by lazy { ArrayList<View>() }
+
     private val compatViewInflater: CompatViewInflater by lazy { CompatViewInflater() }
 
     private var whetherRootLayout: Boolean = false
 
     override fun onCreateView(parent: View?, name: String, context: Context, attrs: AttributeSet): View? =
-        compatViewInflater.createView(parent, name, context, attrs)?.apply {
-            parent ?: return@apply
-            scanCompatPixel(attrs)
-        }
+        compatViewInflater.createView(parent, name, context, attrs)?.scanCompat(attrs)
 
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? =
-        compatViewInflater.createView(name, context, attrs)?.scanCompatPixel(attrs)
+        compatViewInflater.createView(name, context, attrs)?.scanCompat(attrs)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         whetherRootLayout = false
         printlnMetrics()
         LayoutInflaterCompat.setFactory2(layoutInflater, this)
         super.onCreate(savedInstanceState)
+        window.decorView.postViewCompat()
+    }
+
+    private fun View.postViewCompat() {
+        post {
+            for (index in delayCompatList.indices) {
+                delayCompatList[index].scanCompat()
+            }
+            delayCompatList.clear()
+        }
     }
 
     override fun setContentView(view: View?) {
@@ -82,7 +91,7 @@ abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factor
         w(_TAG, "${TargetScreenMetrics.get()}")
     }
 
-    private fun View.scanCompatPixel(attrs: AttributeSet): View {
+    private fun View.scanCompat(attrs: AttributeSet): View {
         if (!whetherRootLayout) {
             for (index in 0 until attrs.attributeCount) {
                 whetherRootLayout = when (attrs.getAttributeNameResource(index)) {
@@ -95,7 +104,14 @@ abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factor
                 }
                 if (whetherRootLayout) break
             }
-        } else compatPixel()
+        } else scanCompat()
+        return this
+    }
+
+    private fun View.scanCompat():View{
+        if (isAnalyticalFinished()) compatMargin().compatMeasuredSize()
+        else delayCompatList.add(this)
+        compatPadding().compatTextParams().compatDrawableRadii()
         return this
     }
 }

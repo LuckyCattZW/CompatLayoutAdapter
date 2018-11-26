@@ -14,8 +14,10 @@ class ExampleUnitTest {
 //        var y = 1536
 //        var x = 1920
 //        var y = 1200
-        var x = 1920
-        var y = 1080
+//        var x = 1920
+//        var y = 1080
+        var x = 26
+        var y = 9
 
         val c = calculationScreenScale(x, y)
         println("${c[0]}:${c[1]}")

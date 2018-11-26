@@ -36,6 +36,8 @@ class MainActivity : CompatLayoutActivity() {
             adapter = MyAdapter()
         }
 
+        Log.e("SSSSSSSSSSSSSSSSS", "setViewVisible: id=" + Thread.currentThread().id + ", name=" + Thread.currentThread().name)
+
         supportFragmentManager.beginTransaction().add(MyFrameLayout.id, MyFragment()).commitAllowingStateLoss()
         Log.e(_TAG, "applicationContext.packageResourcePath=${applicationContext.packageResourcePath}")
     }

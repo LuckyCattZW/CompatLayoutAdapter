@@ -5,13 +5,12 @@
               android:layout_height="match_parent">
 
     <android.support.v7.widget.AppCompatTextView
-            android:id="@+id/MyAppCompatTextView"
+            android:id="@+id/MyAppCompatTextViewDialog"
             android:layout_gravity="center"
             android:text="DialogFragment"
             android:textSize="50px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
-
 
     <LinearLayout
             android:layout_width="1152px"
