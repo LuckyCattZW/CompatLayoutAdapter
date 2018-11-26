@@ -27,6 +27,8 @@
 
 ### 使用方式
 
+kotlin version 必须大于或等于 1.3.10
+
 `Step 1. Add the JitPack repository to your build file `
 
 ```groovy

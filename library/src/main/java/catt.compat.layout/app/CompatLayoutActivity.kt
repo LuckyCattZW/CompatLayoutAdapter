@@ -13,11 +13,12 @@ import catt.compat.layout.R
 import catt.compat.layout.internal.CompatViewInflater
 import catt.compat.layout.internal.IMatch
 import catt.compat.layout.internal.TargetScreenMetrics
+import java.util.*
 
 abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factory2, IMatch {
     private val _TAG: String by lazy { CompatLayoutActivity::class.java.simpleName }
 
-    private val delayCompatList : ArrayList<View> by lazy { ArrayList<View>() }
+    private val delayCompatList: MutableList<View> by lazy { Collections.synchronizedList(ArrayList<View>()) }
 
     private val compatViewInflater: CompatViewInflater by lazy { CompatViewInflater() }
 
@@ -38,12 +39,14 @@ abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factor
     }
 
     private fun View.postViewCompat() {
+        e(_TAG, "CompatLayoutActivity.postViewCompat: size=${delayCompatList.size}")
         post {
             for (index in delayCompatList.indices) {
-                delayCompatList[index].scanCompat()
+                delayCompatList[index].scanMeasuredCompat()
             }
             delayCompatList.clear()
         }
+        e(_TAG, "CompatLayoutActivity.postViewCompat: finished")
     }
 
     override fun setContentView(view: View?) {
@@ -104,14 +107,19 @@ abstract class CompatLayoutActivity : AppCompatActivity(), LayoutInflater.Factor
                 }
                 if (whetherRootLayout) break
             }
-        } else scanCompat()
+        } else scanCompat().scanMeasuredCompat()
         return this
     }
 
+    private fun View.scanMeasuredCompat():View{
+        return if (isAnalyticalFinished()) compatMargin().compatMeasuredSize()
+        else {
+            delayCompatList.add(this)
+            this
+        }
+    }
+
     private fun View.scanCompat():View{
-        if (isAnalyticalFinished()) compatMargin().compatMeasuredSize()
-        else delayCompatList.add(this)
-        compatPadding().compatTextParams().compatDrawableRadii()
-        return this
+        return compatPadding().compatTextParams().compatDrawableRadii()
     }
 }
